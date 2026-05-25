@@ -6,7 +6,7 @@ metadata:
   finalizers:
     - resources-finalizer.argocd.argoproj.com
 spec:
-  project: default
+  project: techtaurant
   source:
     repoURL: https://github.com/Techtaurant/gitops.git
     targetRevision: HEAD
