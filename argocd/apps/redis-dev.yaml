@@ -1,0 +1,21 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: redis-dev
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.com
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/Techtaurant/gitops.git
+    targetRevision: HEAD
+    path: apps/database/redis/overlays/dev
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: redis-dev
+  syncPolicy:
+    automated:
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
