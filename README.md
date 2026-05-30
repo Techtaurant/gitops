@@ -7,6 +7,7 @@ GitOps manifests for the Techtaurant k3s cluster.
 ```text
 apps/
   argocd.yaml            # Argo CD Application manifests
+  redis-dev.yaml
   sealed-secrets.yaml
 argocd/
   kustomization.yaml     # Resources managed by apps/argocd.yaml
@@ -26,7 +27,7 @@ rustfs-prod/
 The other top-level directories contain the actual Kubernetes manifests managed by those Applications.
 
 For example, `apps/argocd.yaml` points to `argocd`.
-`redis-dev` is prepared, but not registered under `apps` yet. Add an Application manifest under `apps` when Sealed Secrets is running.
+`redis-dev` uses a SealedSecret generated from `redis-dev/secret.local.yaml`.
 
 ## Argo CD
 
