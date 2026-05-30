@@ -48,3 +48,11 @@ Argo CD is exposed through `argocd.techtaurant.com`. The cluster-side NodePort s
 `apps/sealed-secrets.yaml` installs the Sealed Secrets controller first.
 
 After it is synced and healthy, generate sealed secrets with `kubeseal` and then register workloads such as `redis-dev` under `apps`.
+
+## init
+
+```sh
+kubectl create namespace argocd --dry-run=client -o yaml | kubectl apply -f -
+kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+kubectl apply -f https://raw.githubusercontent.com/Techtaurant/gitops/main/argocd/argocd-server-nodeport.yaml
+```
