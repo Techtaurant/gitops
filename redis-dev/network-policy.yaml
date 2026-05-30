@@ -6,7 +6,7 @@ spec:
   podSelector:
     matchLabels:
       app.kubernetes.io/name: redis
-      app.kubernetes.io/component: database
+      app.kubernetes.io/instance: redis-dev
   policyTypes:
     - Ingress
   ingress:
