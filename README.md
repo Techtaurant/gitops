@@ -28,6 +28,7 @@ The other top-level directories contain the actual Kubernetes manifests managed 
 
 For example, `apps/argocd.yaml` points to `argocd`.
 `redis-dev` uses a SealedSecret generated from `redis-dev/secret.local.yaml`.
+`rustfs-dev` is prepared for dev object storage and exposes the RustFS console through NodePort `30901`.
 
 ## Argo CD
 
@@ -49,6 +50,18 @@ Argo CD is exposed through `argocd.techtaurant.com`. The cluster-side NodePort s
 `apps/sealed-secrets.yaml` installs the Sealed Secrets controller first.
 
 After it is synced and healthy, generate sealed secrets with `kubeseal` and then register workloads such as `redis-dev` under `apps`.
+
+## RustFS dev
+
+`rustfs-dev` contains the RustFS StatefulSet, internal S3-compatible service on port `9000`, and console debug NodePort on `30901`.
+
+To update the sealed runtime secret:
+
+```sh
+cp rustfs-dev/secret.example.yaml rustfs-dev/secret.local.yaml
+# Fill RUSTFS_ACCESS_KEY, RUSTFS_SECRET_KEY, and allowed origins.
+kubeseal --format yaml < rustfs-dev/secret.local.yaml > rustfs-dev/secret.yaml
+```
 
 ## init
 
