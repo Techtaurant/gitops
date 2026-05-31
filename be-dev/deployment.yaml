@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: techtaurant-be
+  labels:
+    app.kubernetes.io/name: techtaurant-be
+    app.kubernetes.io/instance: be-dev
+spec:
+  replicas: 1
+  revisionHistoryLimit: 3
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: techtaurant-be
+      app.kubernetes.io/instance: be-dev
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: techtaurant-be
+        app.kubernetes.io/instance: be-dev
+    spec:
+      containers:
+        - name: techtaurant-be
+          image: ghcr.io/techtaurant/be-k8s-poc:dev-initial
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 8080
+          envFrom:
+            - secretRef:
+                name: techtaurant-be-env
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: http
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            failureThreshold: 6
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: http
+            initialDelaySeconds: 60
+            periodSeconds: 20
+            failureThreshold: 3
+          resources:
+            requests:
+              cpu: 100m
+              memory: 512Mi
+            limits:
+              cpu: 500m
+              memory: 1Gi

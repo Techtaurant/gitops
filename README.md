@@ -7,7 +7,9 @@ GitOps manifests for the Techtaurant k3s cluster.
 ```text
 apps/
   argocd.yaml            # Argo CD Application manifests
+  be-dev.yaml
   redis-dev.yaml
+  rustfs-dev.yaml
   sealed-secrets.yaml
 argocd/
   kustomization.yaml     # Resources managed by apps/argocd.yaml
@@ -28,7 +30,8 @@ The other top-level directories contain the actual Kubernetes manifests managed 
 
 For example, `apps/argocd.yaml` points to `argocd`.
 `redis-dev` uses a SealedSecret generated from `redis-dev/secret.local.yaml`.
-`rustfs-dev` is prepared for dev object storage and exposes the RustFS console through NodePort `30901`.
+`rustfs-dev` is prepared for dev object storage and exposes the public RustFS S3 endpoint through NodePort `30900` and console debug access through NodePort `30901`.
+`be-dev` deploys the backend image from GHCR and exposes a debug NodePort on `30880`.
 
 ## Argo CD
 
@@ -53,7 +56,7 @@ After it is synced and healthy, generate sealed secrets with `kubeseal` and then
 
 ## RustFS dev
 
-`rustfs-dev` contains the RustFS StatefulSet, internal S3-compatible service on port `9000`, and console debug NodePort on `30901`.
+`rustfs-dev` contains the RustFS StatefulSet, internal S3-compatible service on port `9000`, public S3 NodePort on `30900`, and console debug NodePort on `30901`.
 
 To update the sealed runtime secret:
 
@@ -62,6 +65,21 @@ cp rustfs-dev/secret.example.yaml rustfs-dev/secret.local.yaml
 # Fill RUSTFS_ACCESS_KEY, RUSTFS_SECRET_KEY, and allowed origins.
 kubeseal --format yaml < rustfs-dev/secret.local.yaml > rustfs-dev/secret.yaml
 ```
+
+## Backend dev
+
+`be-dev` expects the backend image to be published as `ghcr.io/techtaurant/be-k8s-poc`.
+The dev image tag is controlled by `be-dev/kustomization.yaml`, and CI updates only that file.
+
+Before syncing `apps/be-dev.yaml`, create the sealed runtime secret:
+
+```sh
+cp be-dev/secret.example.yaml be-dev/secret.local.yaml
+# Fill database, OAuth, JWT, RustFS, and monitoring values.
+kubeseal --format yaml < be-dev/secret.local.yaml > be-dev/secret.yaml
+```
+
+Then add `secret.yaml` to `be-dev/kustomization.yaml` resources before committing.
 
 ## init
 
