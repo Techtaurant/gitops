@@ -7,4 +7,4 @@ resources:
   - debug-nodeport.yaml
 images:
   - name: ghcr.io/techtaurant/be-k8s-poc
-    newTag: dev-initial
+    newTag: poc-dev-b56341a
