@@ -8,6 +8,7 @@ GitOps manifests for the Techtaurant k3s cluster.
 apps/
   argocd.yaml            # Argo CD Application manifests
   be-dev.yaml
+  postgres-dev.yaml
   redis-dev.yaml
   rustfs-dev.yaml
   sealed-secrets.yaml
@@ -30,6 +31,7 @@ The other top-level directories contain the actual Kubernetes manifests managed 
 
 For example, `apps/argocd.yaml` points to `argocd`.
 `redis-dev` uses a SealedSecret generated from `redis-dev/secret.local.yaml`.
+`postgres-dev` provides the dev PostgreSQL database at `postgres.postgres-dev.svc.cluster.local:5432`.
 `rustfs-dev` is prepared for dev object storage and exposes the public RustFS S3 endpoint through NodePort `30900` and console debug access through NodePort `30901`.
 `be-dev` deploys the backend image from GHCR and exposes a debug NodePort on `30880`.
 
@@ -81,6 +83,19 @@ kubeseal --format yaml < be-dev/secret.local.yaml > be-dev/secret.yaml
 ```
 
 Then add `secret.yaml` to `be-dev/kustomization.yaml` resources before committing.
+
+## Postgres dev
+
+`postgres-dev` contains a single-node PostgreSQL StatefulSet for the POC backend.
+The backend uses `postgres.postgres-dev.svc.cluster.local:5432`.
+
+To update the sealed database secret:
+
+```sh
+cp postgres-dev/secret.example.yaml postgres-dev/secret.local.yaml
+# Fill POSTGRES_PASSWORD.
+kubeseal --format yaml < postgres-dev/secret.local.yaml > postgres-dev/secret.yaml
+```
 
 ## init
 
