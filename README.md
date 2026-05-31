@@ -70,6 +70,7 @@ kubeseal --format yaml < rustfs-dev/secret.local.yaml > rustfs-dev/secret.yaml
 
 `be-dev` expects the backend image to be published as `ghcr.io/techtaurant/be-k8s-poc`.
 The dev image tag is controlled by `be-dev/kustomization.yaml`, and CI updates only that file.
+For direct browser uploads, set `AWS_S3_PRESIGN_ENDPOINT` to `https://dev-s3.techtaurant.com`.
 
 Before syncing `apps/be-dev.yaml`, create the sealed runtime secret:
 
